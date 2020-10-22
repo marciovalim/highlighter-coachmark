@@ -2,7 +2,7 @@
 .atom/
 .idea
 .packages
-.pub/
+.pub/ 
 build/
 ios/.generated/
 packages
