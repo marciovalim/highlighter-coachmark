@@ -90,6 +90,7 @@ class CoachMark {
     BoxShape markShape = BoxShape.circle,
     Duration duration,
     VoidCallback onClose,
+    Radius radius,
   }) async {
     // Prevent from showing multiple marks at the same time
     if (_isVisible) {
@@ -105,13 +106,14 @@ class CoachMark {
     _overlayEntryBackground = _overlayEntryBackground ??
         new OverlayEntry(
           builder: (BuildContext context) => new _HighlighterCoachMarkWidget(
-                key: globalKey,
-                bgColor: bgColor,
-                markRect: markRect,
-                markShape: markShape,
-                doClose: close,
-                children: children,
-              ),
+            key: globalKey,
+            bgColor: bgColor,
+            markRect: markRect,
+            markShape: markShape,
+            doClose: close,
+            children: children,
+            radius: radius,
+          ),
         );
 
     OverlayState overlayState = Overlay.of(targetContext);
@@ -146,12 +148,16 @@ class _HighlighterCoachMarkWidget extends StatefulWidget {
     @required this.children,
     @required this.doClose,
     @required this.bgColor,
+    @required this.radius,
+    this.useBackdropFilter = true,
   }) : super(key: key);
 
+  final Radius radius;
   final Rect markRect;
   final BoxShape markShape;
   final List<Widget> children;
   final VoidCallback doClose;
+  final bool useBackdropFilter;
   final Color bgColor;
 
   @override
@@ -208,7 +214,8 @@ class _HighlighterCoachMarkState extends State<_HighlighterCoachMarkWidget>
   @override
   Widget build(BuildContext context) {
     Rect position = widget.markRect;
-    final clipper = _CoachMarkClipper(position);
+    final clipper =
+        widget.useBackdropFilter ? _CoachMarkClipper(position) : Clip.none;
 
     return AnimatedBuilder(
         animation: _controller,
@@ -244,6 +251,7 @@ class _HighlighterCoachMarkState extends State<_HighlighterCoachMarkWidget>
                           ))),
                   painter: _CoachMarkPainter(
                     rect: position,
+                    radius: widget.radius,
                     shadow: BoxShadow(
                         color:
                             widget.bgColor.withOpacity(_opacityAnimation.value),
@@ -371,9 +379,11 @@ class _CoachMarkPainter extends CustomPainter {
     @required this.shadow,
     this.clipper,
     this.coachMarkShape = BoxShape.circle,
+    @required this.radius,
   });
 
   final Rect rect;
+  final Radius radius;
   final BoxShadow shadow;
   final _CoachMarkClipper clipper;
   final BoxShape coachMarkShape;
@@ -387,7 +397,8 @@ class _CoachMarkPainter extends CustomPainter {
     switch (coachMarkShape) {
       case BoxShape.rectangle:
         canvas.drawRRect(
-            RRect.fromRectAndRadius(rect, Radius.circular(circle.width * 0.3)),
+            RRect.fromRectAndRadius(
+                rect, radius ?? Radius.circular(circle.width * 0.3)),
             paint);
         break;
       case BoxShape.circle:
