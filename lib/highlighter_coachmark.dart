@@ -91,7 +91,7 @@ class CoachMark {
     Duration duration,
     VoidCallback onClose,
     Radius radius,
-    bool useBackdropFilter = false,
+    bool useOval = false,
   }) async {
     // Prevent from showing multiple marks at the same time
     if (_isVisible) {
@@ -114,7 +114,7 @@ class CoachMark {
             doClose: close,
             children: children,
             radius: radius,
-            useOval: useBackdropFilter,
+            useOval: useOval,
           ),
         );
 
@@ -361,19 +361,18 @@ class _CoachMarkClipper extends CustomClipper<Path> {
   final Rect rect;
   final bool useOval;
 
-  _CoachMarkClipper({@required this.rect, @required this.useOval});
+  _CoachMarkClipper({@required this.useOval, @required this.rect});
 
   @override
   Path getClip(Size size) {
-    if (useOval) {
-      return Path.combine(
-        ui.PathOperation.difference,
-        Path()..addRect(Offset.zero & size),
-        Path()..addOval(rect),
-      );
-    } else {
-      return Path();
-    }
+    final pathToSubtract = Path();
+    useOval ? pathToSubtract.addOval(rect) : pathToSubtract.addRect(rect);
+
+    return Path.combine(
+      ui.PathOperation.difference,
+      Path()..addRect(Offset.zero & size),
+      pathToSubtract,
+    );
   }
 
   @override
