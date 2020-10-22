@@ -19,7 +19,42 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.purple,
         accentColor: const Color(0xFFF850DD),
       ),
-      home: FriendsListPage(),
+      // home: FriendsListPage(),
+      home: Test(),
+    );
+  }
+}
+
+class Test extends StatelessWidget {
+  final _textKey = GlobalKey();
+
+  Test({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Text(
+          'Test text',
+          key: _textKey,
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showCoachmark,
+      ),
+    );
+  }
+
+  void _showCoachmark() {
+    final RenderBox target = _textKey.currentContext.findRenderObject();
+    final markRect = target.localToGlobal(Offset.zero) & target.size;
+    CoachMark().show(
+      targetContext: _textKey.currentContext,
+      children: [],
+      markRect: markRect,
+      markShape: BoxShape.rectangle,
     );
   }
 }
