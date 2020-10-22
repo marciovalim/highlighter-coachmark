@@ -217,7 +217,6 @@ class _HighlighterCoachMarkState extends State<_HighlighterCoachMarkWidget>
   Widget build(BuildContext context) {
     Rect position = widget.markRect;
     final clipper = _CoachMarkClipper(rect: position, useOval: widget.useOval);
-
     return AnimatedBuilder(
         animation: _controller,
         builder: (BuildContext context, Widget child) {
