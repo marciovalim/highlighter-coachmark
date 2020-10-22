@@ -91,6 +91,7 @@ class CoachMark {
     Duration duration,
     VoidCallback onClose,
     Radius radius,
+    bool useBackdropFilter = false,
   }) async {
     // Prevent from showing multiple marks at the same time
     if (_isVisible) {
@@ -113,6 +114,7 @@ class CoachMark {
             doClose: close,
             children: children,
             radius: radius,
+            useBackdropFilter: useBackdropFilter,
           ),
         );
 
@@ -149,7 +151,7 @@ class _HighlighterCoachMarkWidget extends StatefulWidget {
     @required this.doClose,
     @required this.bgColor,
     @required this.radius,
-    this.useBackdropFilter = true,
+    @required this.useBackdropFilter,
   }) : super(key: key);
 
   final Radius radius;
