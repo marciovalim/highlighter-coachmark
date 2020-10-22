@@ -217,7 +217,7 @@ class _HighlighterCoachMarkState extends State<_HighlighterCoachMarkWidget>
   Widget build(BuildContext context) {
     Rect position = widget.markRect;
     final clipper =
-        widget.useBackdropFilter ? _CoachMarkClipper(position) : Clip.none;
+        widget.useBackdropFilter ? _CoachMarkClipper(position) : null;
 
     return AnimatedBuilder(
         animation: _controller,
