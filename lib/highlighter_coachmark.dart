@@ -114,7 +114,7 @@ class CoachMark {
             doClose: close,
             children: children,
             radius: radius,
-            useBackdropFilter: useBackdropFilter,
+            useOval: useBackdropFilter,
           ),
         );
 
@@ -151,7 +151,7 @@ class _HighlighterCoachMarkWidget extends StatefulWidget {
     @required this.doClose,
     @required this.bgColor,
     @required this.radius,
-    @required this.useBackdropFilter,
+    @required this.useOval,
   }) : super(key: key);
 
   final Radius radius;
@@ -159,7 +159,7 @@ class _HighlighterCoachMarkWidget extends StatefulWidget {
   final BoxShape markShape;
   final List<Widget> children;
   final VoidCallback doClose;
-  final bool useBackdropFilter;
+  final bool useOval;
   final Color bgColor;
 
   @override
@@ -216,8 +216,7 @@ class _HighlighterCoachMarkState extends State<_HighlighterCoachMarkWidget>
   @override
   Widget build(BuildContext context) {
     Rect position = widget.markRect;
-    final clipper =
-        widget.useBackdropFilter ? _CoachMarkClipper(position) : Clip.none;
+    final clipper = _CoachMarkClipper(rect: position, useOval: widget.useOval);
 
     return AnimatedBuilder(
         animation: _controller,
@@ -361,13 +360,18 @@ class _RenderPointerListenerWithExceptRegion extends RenderPointerListener {
 
 class _CoachMarkClipper extends CustomClipper<Path> {
   final Rect rect;
+  final bool useOval;
 
-  _CoachMarkClipper(this.rect);
+  _CoachMarkClipper({@required this.rect, @required this.useOval});
 
   @override
   Path getClip(Size size) {
+    final rect2 = Path();
+    if (useOval) {
+      rect2.addOval(rect);
+    }
     return Path.combine(ui.PathOperation.difference,
-        Path()..addRect(Offset.zero & size), Path()..addOval(rect));
+        Path()..addRect(Offset.zero & size), rect2);
   }
 
   @override
