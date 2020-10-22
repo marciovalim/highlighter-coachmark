@@ -217,7 +217,6 @@ class _HighlighterCoachMarkState extends State<_HighlighterCoachMarkWidget>
   Widget build(BuildContext context) {
     Rect position = widget.markRect;
     final clipper = _CoachMarkClipper(rect: position, useOval: widget.useOval);
-
     return AnimatedBuilder(
         animation: _controller,
         builder: (BuildContext context, Widget child) {
@@ -366,12 +365,15 @@ class _CoachMarkClipper extends CustomClipper<Path> {
 
   @override
   Path getClip(Size size) {
-    final rect2 = Path();
     if (useOval) {
-      rect2.addOval(rect);
+      return Path.combine(
+        ui.PathOperation.difference,
+        Path()..addRect(Offset.zero & size),
+        Path()..addOval(rect),
+      );
+    } else {
+      return Path();
     }
-    return Path.combine(ui.PathOperation.difference,
-        Path()..addRect(Offset.zero & size), rect2);
   }
 
   @override
